@@ -11,8 +11,9 @@ def list_task():
     return data
 
 
-
-#def add():
+def add_task(data):
+    with open("data.json", "w") as f:
+        json.dump(data, f)
 
 #def update():
 
