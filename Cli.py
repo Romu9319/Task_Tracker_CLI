@@ -60,6 +60,19 @@ def delete(id):
         json_manager.add_task(data)
 
 
+@cli.command()
+@click.argument("id", type=int)
+@click.argument("description", type=str)
+def update(id, description):
+    data = json_manager.list_task()
+    for task in data:
+        if task["id"] == id:
+            if description is not None:
+                task["description"] = description
+                task["updatedAt"] = str(datetime.date.today())
+            break
+    json_manager.add_task(data)
+
 if __name__ == '__main__':
     cli()
 
