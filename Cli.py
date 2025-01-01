@@ -7,20 +7,11 @@ import datetime
 def cli():
     pass
 
-@cli.command()
-def list():
-    data = json_manager.list_task()
-    for task in data:
-       print(task)
-       #print(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
-
-
+# Add new tasks
 @cli.command()
 @click.option('--description', required=True, help="Write task description")
-@click.option('--status', default="in-progress", help="Task creation date")  # done, todo, in-progress
+@click.option('--status', default="todo", help="Task creation date")
 @click.option('--date', default=datetime.date.today(), help="Task creation date")
-### investigar como puedo hacer para que se rellenen los datos del 
-### resto de propiedades de la tarea ("status","createdAt", "updatedAt")
 @click.pass_context
 def add(ctx, description, status, date):
     if not description:
@@ -31,13 +22,43 @@ def add(ctx, description, status, date):
         new_task = {
             "id": task_id,
             "description": description,
-            "status":"in-progress",
+            "status":status,
             "createdAt": str(date),
             "updatedAt": str(datetime.date.today())
-
         } 
         data.append(new_task)
         json_manager.add_task(data)
+
+# List all tasks or list by status
+@cli.command()
+@click.argument("status", required=False, type=str)
+def list(status):
+    data = json_manager.list_task()
+
+    if not status:
+        for task in data:
+            print(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
+    else:
+        tasks = [task for task in data if task["status"] == status]
+        if not tasks:
+            print(f"Tasks with status {status} not found ")
+        else:
+            for task in tasks:
+                print(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
+
+# Delete task by id
+@cli.command()
+@click.argument("id", type=int)
+def delete(id):
+    data = json_manager.list_task()
+    task = next((task for task in data if task["id"] == id), None)
+
+    if task is None:
+        print(f"Task with id {id} not found")
+    else: 
+        data.remove(task)
+        json_manager.add_task(data)
+
 
 if __name__ == '__main__':
     cli()
