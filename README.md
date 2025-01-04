@@ -2,7 +2,7 @@
 A command line application (CLI) to manage tasks. Allows you to easily add, list, update, delete and change the task status from the terminal.
 
 # URL project
-    https://github.com/Romu9319/Task_Tracker_CLI
+https://github.com/Romu9319/Task_Tracker_CLI
     
 # Installation 
 1. Clone the repository 
