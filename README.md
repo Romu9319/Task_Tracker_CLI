@@ -19,12 +19,18 @@ A command line application (CLI) to manage tasks. Allows you to easily add, list
       python cli.py add [description] [status] [date]
     ```
     - description: Description of the task (Required)
-    - status: Default value: everything. Task states (all, in-progress, done).
+    - status: Default value (todo). Task states (all, in-progress, done).
     - date: Default value current date. YYYY-MM-DD date format.
     - Example:
        ```bash
-          python cli.py add "Review documentation " in-progress 2024-06-05
-        ```
+          python cli.py add "Review documentation" in-progress 2024-06-05
+       ```
+       or
+       ```bash
+          python cli.py add "Review documentation"
+       ```
+       - In this case, status and date will take the default values
+    
 2. List tasks
    - List all tasks
     ```bash
