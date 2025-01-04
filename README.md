@@ -11,7 +11,7 @@ A command line application (CLI) to manage tasks. Allows you to easily add, list
 
 # Available Commands
 1. Add new task
-```http
+```bash
   python cli.py add [description] [status] [date]
 ```
     
