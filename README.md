@@ -57,5 +57,5 @@ A command line application (CLI) to manage tasks. Allows you to easily add, list
    ```bash
       python cli.py mark-done [id]
    ```
-       - Remember that todo is the default state of the tasks, unless it is manually indicated when creating them
+   - Remember that todo is the default state of the tasks, unless it is manually indicated when creating them
     
