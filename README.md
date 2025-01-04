@@ -19,6 +19,32 @@ A command line application (CLI) to manage tasks. Allows you to easily add, list
     - date: Default value current date. YYYY-MM-DD date format.
     - Example:
        ```bash
-          python cli.py add "Revisar documentación" in-progress 2024-06-05
+          python cli.py add "Review documentation " in-progress 2024-06-05
         ```
+2. List tasks
+   - List all tasks
+    ```bash
+      python cli.py list
+    ```
+   - List by status
+    ```bash
+      python cli.py list [status]
+    ```
+3. Delete task
+    ```bash
+      python cli.py delete [id]
+    ```
+4. Update description
+    ```bash
+      python cli.py update [id] "New description"
+    ```
+5. Change status
+   - Change to in-progress
+   ```bash
+      python cli.py mark-in-progress [id]
+   ```
+   - Change to done
+   ```bash
+      python cli.py mark-done [id]
+   ```
     
