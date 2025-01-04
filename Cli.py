@@ -7,24 +7,24 @@ import datetime
 def cli():
     pass
 
-# Add new tasks
 VALID_STATUSES = ["todo", "in-progress", "done"]
+# Add new tasks
 @cli.command()
 @click.argument('description', required=True)
 @click.argument('status', default="todo", type=str)
-@click.argument('date', default=datetime.date.today())
+@click.argument('date', default=datetime.date.today())#, help="Task creation date in YYYY-MM-DD")
 @click.pass_context
 def add(ctx, description, status, date):
     if description.strip() == "":
         ctx.fail("Task description is required")
     
     if status and status not in VALID_STATUSES:
-        print(f"Invalid status {status}. The valid status are: {', '.join(VALID_STATUSES)}")
+        ctx.fail(f"Invalid status {status}. The valid status are: {', '.join(VALID_STATUSES)}")
     
     try:
         datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
-        ctx.fail("Invalid date format!. Please use YYYY-MM-DD.")
+        ctx.fail("Invalid date format! Please use YYYY-MM-DD.")
     
     data = json_manager.read_task()
     task_id = max((task["id"] for task in data), default=0) + 1
@@ -32,7 +32,7 @@ def add(ctx, description, status, date):
         "id": task_id,
         "description": description,
         "status":status,
-        "createdAt": str(date),
+        "createdAt": date,
         "updatedAt": str(datetime.date.today())
     } 
     data.append(new_task)
@@ -40,14 +40,14 @@ def add(ctx, description, status, date):
     print(f"New task with id {task_id} has been created")
 
 # List all tasks or list by status
-VALID_STATUSES = ["todo", "in-progress", "done"]
 @cli.command()
 @click.argument("status", required=False, type=str)
-def list(status):
+@click.pass_context
+def list(ctx, status):
     data = json_manager.read_task()
 
     if status and status not in VALID_STATUSES:
-        print(f"Invalid status {status}. The valid status are: {', '.join(VALID_STATUSES)}")
+        ctx.fail(f"Invalid status {status}. The valid status are: {', '.join(VALID_STATUSES)}")
 
     if not status:
         for task in data:
@@ -63,12 +63,12 @@ def list(status):
 # Delete task by id
 @cli.command()
 @click.argument("id", type=str)
-def delete(id):
+@click.pass_context
+def delete(ctx, id):
     try:
         task_id = int(id)
     except ValueError:
-        print("A numeric ID is required, try again")
-        return
+        ctx.fail("A numeric ID is required, try again")
     
     data = json_manager.read_task()
     task = next((task for task in data if task["id"] == task_id), None)
@@ -86,15 +86,17 @@ def delete(id):
 @click.argument("description", type=str)
 @click.pass_context
 def update(ctx, id, description):
-    if description.strip() == "":
+    if not description.strip():
         ctx.fail("Task description is required")
+
     try:
         task_id = int(id)
     except ValueError:
-        print("A numeric ID is required, try again")
-        return
+        ctx.fail("A numeric ID is required, try again")
 
     data = json_manager.read_task()
+    task_found = False
+
     for task in data:
         if task["id"] == task_id:
             if description is not None:
@@ -102,19 +104,24 @@ def update(ctx, id, description):
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
                 print(f"Task with id {task_id} has been updated")
+            task_found = True
             break
+    if not task_found:
+        print(f"Task with id {task_id} not found")
 
 # Change status to in-progress   
 @cli.command()
 @click.argument("id", type=str)
-def mark_in_progress(id):
+@click.pass_context
+def mark_in_progress(ctx, id):
     try:
         task_id = int(id)
     except ValueError:
-        print("A numeric ID is required, try again")
-        return
+        ctx.fail("A numeric ID is required, try again")
     
     data = json_manager.read_task()
+    task_found = False
+
     for task in data:
         if task["id"] == task_id:
             if task["status"] != "in-progress":
@@ -122,20 +129,24 @@ def mark_in_progress(id):
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
                 print(f"Task {task_id} marked as 'in-progress'")
+            task_found = True
             break
-    print(f"Task with id {task_id} not found")
+    if not task_found:
+        print(f"Task with id {task_id} not found")
 
 
 @cli.command()
-@click.argument("id", type=int)
-def mark_done(id):
+@click.argument("id", type=str)
+@click.pass_context
+def mark_done(ctx, id):
     try:
         task_id = int(id)
     except ValueError:
-        print("A numeric ID is required, try again")
-        return
+        ctx.fail("A numeric ID is required, try again")
     
     data = json_manager.read_task()
+    task_found = False
+
     for task in data:
         if task["id"] == task_id:
             if task["status"] != "done":
@@ -143,8 +154,10 @@ def mark_done(id):
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
                 print(f"Task {task_id} marked as 'done'")
+            task_found = True
             break
-    print(f"Task with id {task_id} not found")
+    if not task_found:
+        print(f"Task with id {task_id} not found")
 
 
 if __name__ == '__main__':
