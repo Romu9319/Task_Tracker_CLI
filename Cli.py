@@ -18,7 +18,7 @@ def add(ctx, description, status, date):
         ctx.fail("Task description required")
     else:
         data = json_manager.list_task()
-        task_id = len(data) + 1 
+        task_id = max((task["id"] for task in data), default=0) + 1
         new_task = {
             "id": task_id,
             "description": description,
@@ -28,6 +28,7 @@ def add(ctx, description, status, date):
         } 
         data.append(new_task)
         json_manager.add_task(data)
+        print(f"New task with id {task_id} has been created")
 
 # List all tasks or list by status
 @cli.command()
@@ -58,6 +59,7 @@ def delete(id):
     else: 
         data.remove(task)
         json_manager.add_task(data)
+        print(f"Task with id {id} has been deleted")
 
 
 @cli.command()
@@ -70,8 +72,41 @@ def update(id, description):
             if description is not None:
                 task["description"] = description
                 task["updatedAt"] = str(datetime.date.today())
+                json_manager.add_task(data)
+                print(f"Task with id {id} has been updated")
             break
-    json_manager.add_task(data)
+    
+
+
+@cli.command()
+@click.argument("id", type=int)
+def mark_in_progress(id):
+    data = json_manager.list_task()
+    for task in data:
+        if task["id"] == id:
+            if task["status"] != "in-progress":
+                task["status"] = "in-progress"
+                task["updatedAt"] = str(datetime.date.today())
+                json_manager.add_task(data)
+                print(f"Task {id} marked as 'in-progress'")
+            break
+    print(f"Task with id {id} not found")
+
+
+@cli.command()
+@click.argument("id", type=int)
+def mark_done(id):
+    data = json_manager.list_task()
+    for task in data:
+        if task["id"] == id:
+            if task["status"] != "done":
+                task["status"] = "done"
+                task["updatedAt"] = str(datetime.date.today())
+                json_manager.add_task(data)
+                print(f"Task {id} marked as 'done'")
+            break
+    print(f"Task with id {id} not found")
+
 
 if __name__ == '__main__':
     cli()
