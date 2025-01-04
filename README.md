@@ -1,4 +1,4 @@
-# Task Manager CLI
+# Task Manager CLI (https://github.com/Romu9319/Task_Tracker_CLI)
 A command line application (CLI) to manage tasks. Allows you to easily add, list, update, delete and change the task status from the terminal.
 
 # Installation 
