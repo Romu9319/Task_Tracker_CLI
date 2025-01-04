@@ -2,7 +2,7 @@ import json
 import os
 
 
-def list_task():
+def read_task():
     if not os.path.isfile('data.json'):
         with open('data.json', 'w') as f:
             json.dump([], f)
@@ -14,17 +14,3 @@ def list_task():
 def add_task(data):
     with open("data.json", "w") as f:
         json.dump(data, f)
-
-#def update():
-
-#def delete():
-
-#def mark_in_progress():
-
-#def mark_done():
-
-
-
-#def list done():
-
-#def list todo():
