@@ -37,7 +37,7 @@ def add(ctx, description, status, date):
     } 
     data.append(new_task)
     json_manager.add_task(data)
-    print(f"New task with id {task_id} has been created")
+    click.echo(f"New task with id {task_id} has been created")
 
 # List all tasks or list by status
 @cli.command()
@@ -51,14 +51,14 @@ def list(ctx, status):
 
     if not status:
         for task in data:
-            print(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
+            click.echo(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
     else:
         tasks = [task for task in data if task["status"] == status]
         if not tasks:
-            print(f"Tasks with status {status} not found ")
+            click.echo(f"Tasks with status {status} not found ")
         else:
             for task in tasks:
-                print(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
+                click.echo(f"{task["id"]} - {task["description"]} | {task["status"]} | {task["createdAt"]} | {task["updatedAt"]}")
 
 # Delete task by id
 @cli.command()
@@ -74,11 +74,11 @@ def delete(ctx, id):
     task = next((task for task in data if task["id"] == task_id), None)
 
     if task is None:
-        print(f"Task with id {id} not found")
+        click.echo(f"Task with id {id} not found")
     else: 
         data.remove(task)
         json_manager.add_task(data)
-        print(f"Task with id {id} has been deleted")
+        click.echo(f"Task with id {id} has been deleted")
 
 # Update task by id
 @cli.command()
@@ -103,11 +103,11 @@ def update(ctx, id, description):
                 task["description"] = description
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
-                print(f"Task with id {task_id} has been updated")
+                click.echo(f"Task with id {task_id} has been updated")
             task_found = True
             break
     if not task_found:
-        print(f"Task with id {task_id} not found")
+        click.echo(f"Task with id {task_id} not found")
 
 # Change status to in-progress   
 @cli.command()
@@ -128,11 +128,11 @@ def mark_in_progress(ctx, id):
                 task["status"] = "in-progress"
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
-                print(f"Task {task_id} marked as 'in-progress'")
+                click.echo(f"Task {task_id} marked as 'in-progress'")
             task_found = True
             break
     if not task_found:
-        print(f"Task with id {task_id} not found")
+        click.echo(f"Task with id {task_id} not found")
 
 
 @cli.command()
@@ -153,11 +153,11 @@ def mark_done(ctx, id):
                 task["status"] = "done"
                 task["updatedAt"] = str(datetime.date.today())
                 json_manager.add_task(data)
-                print(f"Task {task_id} marked as 'done'")
+                click.echo(f"Task {task_id} marked as 'done'")
             task_found = True
             break
     if not task_found:
-        print(f"Task with id {task_id} not found")
+        click.echo(f"Task with id {task_id} not found")
 
 
 if __name__ == '__main__':
